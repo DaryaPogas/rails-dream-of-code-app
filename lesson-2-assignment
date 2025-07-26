@@ -1,0 +1,396 @@
+Question 1
+For each CodingClass, create a new Course record for that class in the Spring 2026 trimester.
+
+daryapogas@MacBookPro rails-dream-of-code-app % git checkout -b week2
+Switched to a new branch 'week2'
+daryapogas@MacBookPro rails-dream-of-code-app % bin/rails c
+Loading development environment (Rails 8.0.1)
+doc-rails(dev)> fall2024=Trimester.find_by(year:'2024', term:'Fall')
+  Trimester Load (2.6ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."year" = '2024' AND "trimesters"."term" = 'Fall' LIMIT 1 /*application='DocRails'*/
+=> 
+#<Trimester:0x0000000127430f08
+...
+doc-rails(dev)> fall2024.application_deadline
+=> Thu, 15 Aug 2024
+doc-rails(dev)> fall2024.end_date
+=> Sat, 30 Nov 2024
+doc-rails(dev)> Trimester.create(year:'2026', term:'Spring', application_deadline:'2026-02-15', start_date:'2026-03-01', end_date:'2026-06-30')
+  TRANSACTION (0.1ms)  BEGIN immediate TRANSACTION /*application='DocRails'*/
+  Trimester Create (2.3ms)  INSERT INTO "trimesters" ("year", "term", "application_deadline", "start_date", "end_date", "created_at", "updated_at") VALUES ('2026', 'Spring', '2026-02-15', '2026-03-01', '2026-06-30', '2025-07-18 20:02:11.483235', '2025-07-18 20:02:11.483235') RETURNING "id" /*application='DocRails'*/
+  TRANSACTION (1.7ms)  COMMIT TRANSACTION /*application='DocRails'*/
+=> 
+#<Trimester:0x00000001271dc590
+ id: 8,
+ year: "2026",
+ term: "Spring",
+ application_deadline: "2026-02-15",
+ start_date: "2026-03-01",
+ end_date: "2026-06-30",
+ created_at: "2025-07-18 20:02:11.483235000 +0000",
+ updated_at: "2025-07-18 20:02:11.483235000 +0000">
+doc-rails(dev)> 
+^C
+doc-rails(dev)> exit
+daryapogas@MacBookPro rails-dream-of-code-app % bin/rails c
+Loading development environment (Rails 8.0.1)
+doc-rails(dev)> Trimester.where(id:8)
+  Trimester Load (0.4ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."id" = 8 /* loading for pp */ LIMIT 11 /*application='DocRails'*/
+=> 
+[#<Trimester:0x0000000123165520
+  id: 8,
+  year: "2026",
+  term: "Spring",
+  application_deadline: "2026-02-15",
+  start_date: "2026-03-01",
+  end_date: "2026-06-30",
+  created_at: "2025-07-18 20:02:11.483235000 +0000",
+  updated_at: "2025-07-18 20:02:11.483235000 +0000">]
+doc-rails(dev)> CodingClass.all
+  CodingClass Load (1.0ms)  SELECT "coding_classes".* FROM "coding_classes" /* loading for pp */ LIMIT 11 /*application='DocRails'*/
+=> 
+[#<CodingClass:0x0000000122f2fe18
+  id: 1,
+  title: "Intro to Programming",
+  description: "Learn the basics of web development, including HTM...",
+  created_at: "2025-07-14 20:16:22.763906000 +0000",
+  updated_at: "2025-07-14 20:16:22.763906000 +0000">,
+ #<CodingClass:0x0000000122a553c0
+  id: 2,
+  title: "React",
+  description: "Learn frontend web development with the React fram...",
+  created_at: "2025-07-14 20:16:22.768171000 +0000",
+doc-rails(dev)> CodingClass.count
+  CodingClass Count (0.2ms)  SELECT COUNT(*) FROM "coding_classes" /*application='DocRails'*/
+=> 5
+doc-rails(dev)* CodingClass.all.each do |CodingClass|
+doc-rails(dev)*   puts CodingClass.title
+doc-rails(dev)> end
+/Users/daryapogas/.rbenv/versions/3.3.0/lib/ruby/gems/3.3.0/gems/irb-1.14.3/lib/irb.rb:1262:in `full_message': (doc-rails):4: formal argument cannot be a constant (SyntaxError)
+...gClass.all.each do |CodingClass|
+...                    ^~~~~~~~~~~
+
+doc-rails(dev)* CodingClass.all.each do |coding_class|
+doc-rails(dev)*   puts coding_class.title
+doc-rails(dev)> end
+  CodingClass Load (9.6ms)  SELECT "coding_classes".* FROM "coding_classes" /*application='DocRails'*/
+Intro to Programming
+React
+NodeJS
+Ruby on Rails
+Python
+=> 
+[#<CodingClass:0x000000012320dea0
+  id: 1,
+  title: "Intro to Programming",
+  description: "Learn the basics of web development, including HTM...",
+  created_at: "2025-07-14 20:16:22.763906000 +0000",
+  updated_at: "2025-07-14 20:16:22.763906000 +0000">,
+ #<CodingClass:0x000000012320dd60
+  id: 2,
+  title: "React",
+  description: "Learn frontend web development with the React fram...",
+  created_at: "2025-07-14 20:16:22.768171000 +0000",
+doc-rails(dev)* CodingClass.all.each do |coding_class|
+doc-rails(dev)*   Course.create(coding_class_id: coding_class.id, trimester_id:8)
+doc-rails(dev)> end
+  CodingClass Load (0.2ms)  SELECT "coding_classes".* FROM "coding_classes" /*application='DocRails'*/
+  TRANSACTION (0.7ms)  BEGIN immediate TRANSACTION /*application='DocRails'*/
+  CodingClass Load (1.0ms)  SELECT "coding_classes".* FROM "coding_classes" WHERE "coding_classes"."id" = 1 LIMIT 1 /*application='DocRails'*/
+  Trimester Load (0.1ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."id" = 8 LIMIT 1 /*application='DocRails'*/
+  Course Create (1.9ms)  INSERT INTO "courses" ("coding_class_id", "trimester_id", "max_enrollment", "created_at", "updated_at") VALUES (1, 8, NULL, '2025-07-18 21:07:25.367344', '2025-07-18 21:07:25.367344') RETURNING "id" /*application='DocRails'*/
+  TRANSACTION (1.7ms)  COMMIT TRANSACTION /*application='DocRails'*/
+  TRANSACTION (0.0ms)  BEGIN immediate TRANSACTION /*application='DocRails'*/
+  CodingClass Load (0.7ms)  SELECT "coding_classes".* FROM "coding_classes" WHERE "coding_classes"."id" = 2 LIMIT 1 /*application='DocRails'*/
+  Trimester Load (0.1ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."id" = 8 LIMIT 1 /*application='DocRails'*/
+  Course Create (0.1ms)  INSERT INTO "courses" ("coding_class_id", "trimester_id", "max_enrollment", "created_at", "updated_at") VALUES (2, 8, NULL, '2025-07-18 21:07:25.374226', '2025-07-18 21:07:25.374226') RETURNING "id" /*application='DocRails'*/
+  TRANSACTION (0.1ms)  COMMIT TRANSACTION /*application='DocRails'*/
+  TRANSACTION (0.0ms)  BEGIN immediate TRANSACTION /*application='DocRails'*/
+  CodingClass Load (0.3ms)  SELECT "coding_classes".* FROM "coding_classes" WHERE "coding_classes"."id" = 3 LIMIT 1 /*application='DocRails'*/
+  Trimester Load (0.1ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."id" = 8 LIMIT 1 /*application='DocRails'*/
+  Course Create (0.1ms)  INSERT INTO "courses" ("coding_class_id", "trimester_id", "max_enrollment", "created_at", "updated_at") VALUES (3, 8, NULL, '2025-07-18 21:07:25.376440', '2025-07-18 21:07:25.376440') RETURNING "id" /*application='DocRails'*/
+  TRANSACTION (0.1ms)  COMMIT TRANSACTION /*application='DocRails'*/
+  TRANSACTION (0.0ms)  BEGIN immediate TRANSACTION /*application='DocRails'*/
+  CodingClass Load (0.3ms)  SELECT "coding_classes".* FROM "coding_classes" WHERE "coding_classes"."id" = 4 LIMIT 1 /*application='DocRails'*/
+  Trimester Load (0.1ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."id" = 8 LIMIT 1 /*application='DocRails'*/
+  Course Create (0.1ms)  INSERT INTO "courses" ("coding_class_id", "trimester_id", "max_enrollment", "created_at", "updated_at") VALUES (4, 8, NULL, '2025-07-18 21:07:25.379016', '2025-07-18 21:07:25.379016') RETURNING "id" /*application='DocRails'*/
+  TRANSACTION (0.2ms)  COMMIT TRANSACTION /*application='DocRails'*/
+  TRANSACTION (0.1ms)  BEGIN immediate TRANSACTION /*application='DocRails'*/
+  CodingClass Load (0.3ms)  SELECT "coding_classes".* FROM "coding_classes" WHERE "coding_classes"."id" = 5 LIMIT 1 /*application='DocRails'*/
+  Trimester Load (0.1ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."id" = 8 LIMIT 1 /*application='DocRails'*/
+  Course Create (0.1ms)  INSERT INTO "courses" ("coding_class_id", "trimester_id", "max_enrollment", "created_at", "updated_at") VALUES (5, 8, NULL, '2025-07-18 21:07:25.381715', '2025-07-18 21:07:25.381715') RETURNING "id" /*application='DocRails'*/
+  TRANSACTION (0.1ms)  COMMIT TRANSACTION /*application='DocRails'*/
+=> 
+[#<CodingClass:0x0000000123200f20
+  id: 1,
+  title: "Intro to Programming",
+  description: "Learn the basics of web development, including HTM...",
+  created_at: "2025-07-14 20:16:22.763906000 +0000",
+  updated_at: "2025-07-14 20:16:22.763906000 +0000">,
+ #<CodingClass:0x0000000123200de0
+  id: 2,
+  title: "React",
+  description: "Learn frontend web development with the React fram...",
+  created_at: "2025-07-14 20:16:22.768171000 +0000",
+doc-rails(dev)> Course.where(trimester_id:8)
+  Course Load (0.3ms)  SELECT "courses".* FROM "courses" WHERE "courses"."trimester_id" = 8 /* loading for pp */ LIMIT 11 /*application='DocRails'*/
+=> 
+[#<Course:0x000000012320ba60
+  id: 36,
+  coding_class_id: 1,
+  trimester_id: 8,
+  max_enrollment: nil,
+  created_at: "2025-07-18 21:07:25.367344000 +0000",
+  updated_at: "2025-07-18 21:07:25.367344000 +0000">,
+ #<Course:0x000000012320b920
+  id: 37,
+  coding_class_id: 2,
+  trimester_id: 8,
+doc-rails(dev)> Course.where(trimester_id:8).count
+  Course Count (2.9ms)  SELECT COUNT(*) FROM "courses" WHERE "courses"."trimester_id" = 8 /*application='DocRails'*/
+=> 5
+doc-rails(dev)> 
+
+Question 2
+Create a new student record and enroll the student in the Intro to Programming course for the Spring 2026 trimester.
+Find a mentor with no more than 2 students (enrollments) assigned and assign that mentor to your new student's enrollment.
+
+doc-rails(dev)> Student.create(first_name:'Alex', last_name:'Miller', email:'amiller@gmail.com')
+  TRANSACTION (0.1ms)  BEGIN immediate TRANSACTION /*application='DocRails'*/
+  Student Exists? (1.8ms)  SELECT 1 AS one FROM "students" WHERE "students"."email" = 'amiller@gmail.com' LIMIT 1 /*application='DocRails'*/
+  Student Create (0.5ms)  INSERT INTO "students" ("first_name", "last_name", "email", "created_at", "updated_at") VALUES ('Alex', 'Miller', 'amiller@gmail.com', '2025-07-20 18:53:09.417309', '2025-07-20 18:53:09.417309') RETURNING "id" /*application='DocRails'*/
+  TRANSACTION (0.5ms)  COMMIT TRANSACTION /*application='DocRails'*/
+=> 
+#<Student:0x000000012106d8e0
+ id: 51,
+ first_name: "Alex",
+ last_name: "Miller",
+ email: "[FILTERED]",
+ created_at: "2025-07-20 18:53:09.417309000 +0000",
+ updated_at: "2025-07-20 18:53:09.417309000 +0000">
+doc-rails(dev)> CodingClass.where(title:"Intro to Programming")
+  CodingClass Load (1.1ms)  SELECT "coding_classes".* FROM "coding_classes" WHERE "coding_classes"."title" = 'Intro to Programming' /* loading for pp */ LIMIT 11 /*application='DocRails'*/
+=> 
+[#<CodingClass:0x00000001214c2788
+  id: 1,
+  title: "Intro to Programming",
+  description: "Learn the basics of web development, including HTM...",
+  created_at: "2025-07-14 20:16:22.763906000 +0000",
+  updated_at: "2025-07-14 20:16:22.763906000 +0000">]
+doc-rails(dev)> Trimester.where(year:'2026', term:'Spring')
+  Trimester Load (0.9ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."year" = '2026' AND "trimesters"."term" = 'Spring' /* loading for pp */ LIMIT 11 /*application='DocRails'*/
+=> 
+[#<Trimester:0x0000000121447768
+  id: 8,
+  year: "2026",
+  term: "Spring",
+  application_deadline: "2026-02-15",
+  start_date: "2026-03-01",
+  end_date: "2026-06-30",
+  created_at: "2025-07-18 20:02:11.483235000 +0000",
+  updated_at: "2025-07-18 20:02:11.483235000 +0000">]
+doc-rails(dev)> Course.where(coding_class_id:1, trimester_id:8)
+  Course Load (1.1ms)  SELECT "courses".* FROM "courses" WHERE "courses"."coding_class_id" = 1 AND "courses"."trimester_id" = 8 /* loading for pp */ LIMIT 11 /*application='DocRails'*/
+=> 
+[#<Course:0x0000000121449ce8
+  id: 36,
+  coding_class_id: 1,
+  trimester_id: 8,
+  max_enrollment: nil,
+  created_at: "2025-07-18 21:07:25.367344000 +0000",
+  updated_at: "2025-07-18 21:07:25.367344000 +0000">]
+doc-rails(dev)> Enrollment.create(course_id:36, student_id:51)
+  TRANSACTION (0.1ms)  BEGIN immediate TRANSACTION /*application='DocRails'*/
+  Course Load (1.4ms)  SELECT "courses".* FROM "courses" WHERE "courses"."id" = 36 LIMIT 1 /*application='DocRails'*/
+  Student Load (0.1ms)  SELECT "students".* FROM "students" WHERE "students"."id" = 51 LIMIT 1 /*application='DocRails'*/
+  Enrollment Create (1.7ms)  INSERT INTO "enrollments" ("course_id", "student_id", "final_grade", "created_at", "updated_at") VALUES (36, 51, NULL, '2025-07-20 18:57:40.657384', '2025-07-20 18:57:40.657384') RETURNING "id" /*application='DocRails'*/
+  TRANSACTION (1.1ms)  COMMIT TRANSACTION /*application='DocRails'*/
+=> 
+#<Enrollment:0x00000001215cca98
+ id: 91,
+ course_id: 36,
+ student_id: 51,
+ final_grade: nil,
+ created_at: "2025-07-20 18:57:40.657384000 +0000",
+ updated_at: "2025-07-20 18:57:40.657384000 +0000">
+
+doc-rails(dev)* Enrollment.all.each do |e|
+doc-rails(dev)*   puts "Student ID: #{e.student_id}, Course ID: #{e.course_id}"
+doc-rails(dev)> end
+  Enrollment Load (2.3ms)  SELECT "enrollments".* FROM "enrollments" /*application='DocRails'*/
+Student ID: 1, Course ID: 1
+Student ID: 2, Course ID: 1
+Student ID: 3, Course ID: 1
+Student ID: 4, Course ID: 1
+Student ID: 5, Course ID: 1
+Student ID: 6, Course ID: 1
+Student ID: 7, Course ID: 1
+Student ID: 8, Course ID: 1
+Student ID: 9, Course ID: 1
+Student ID: 10, Course ID: 1
+Student ID: 11, Course ID: 2
+Student ID: 12, Course ID: 2
+Student ID: 13, Course ID: 2
+Student ID: 14, Course ID: 2
+Student ID: 15, Course ID: 2
+Student ID: 16, Course ID: 2
+Student ID: 17, Course ID: 2
+Student ID: 18, Course ID: 2
+Student ID: 19, Course ID: 2
+Student ID: 20, Course ID: 2
+Student ID: 1, Course ID: 9
+Student ID: 2, Course ID: 16
+Student ID: 3, Course ID: 23
+Student ID: 4, Course ID: 30
+Student ID: 5, Course ID: 9
+Student ID: 6, Course ID: 16
+Student ID: 7, Course ID: 23
+Student ID: 8, Course ID: 30
+Student ID: 9, Course ID: 9
+Student ID: 10, Course ID: 16
+Student ID: 21, Course ID: 3
+Student ID: 22, Course ID: 3
+Student ID: 23, Course ID: 3
+Student ID: 24, Course ID: 3
+Student ID: 25, Course ID: 3
+Student ID: 26, Course ID: 3
+Student ID: 27, Course ID: 3
+Student ID: 28, Course ID: 3
+Student ID: 29, Course ID: 3
+Student ID: 30, Course ID: 3
+Student ID: 11, Course ID: 10
+Student ID: 12, Course ID: 17
+Student ID: 13, Course ID: 24
+Student ID: 14, Course ID: 31
+Student ID: 15, Course ID: 10
+Student ID: 16, Course ID: 17
+Student ID: 17, Course ID: 24
+Student ID: 18, Course ID: 31
+Student ID: 19, Course ID: 10
+Student ID: 20, Course ID: 17
+Student ID: 31, Course ID: 4
+Student ID: 32, Course ID: 4
+Student ID: 33, Course ID: 4
+Student ID: 34, Course ID: 4
+Student ID: 35, Course ID: 4
+Student ID: 36, Course ID: 4
+Student ID: 37, Course ID: 4
+Student ID: 38, Course ID: 4
+Student ID: 39, Course ID: 4
+Student ID: 40, Course ID: 4
+Student ID: 21, Course ID: 11
+Student ID: 22, Course ID: 18
+Student ID: 23, Course ID: 25
+Student ID: 24, Course ID: 32
+Student ID: 25, Course ID: 11
+Student ID: 26, Course ID: 18
+Student ID: 27, Course ID: 25
+Student ID: 28, Course ID: 32
+Student ID: 29, Course ID: 11
+Student ID: 30, Course ID: 18
+Student ID: 41, Course ID: 5
+Student ID: 42, Course ID: 5
+Student ID: 43, Course ID: 5
+Student ID: 44, Course ID: 5
+Student ID: 45, Course ID: 5
+Student ID: 46, Course ID: 5
+Student ID: 47, Course ID: 5
+Student ID: 48, Course ID: 5
+Student ID: 49, Course ID: 5
+Student ID: 50, Course ID: 5
+Student ID: 31, Course ID: 12
+Student ID: 32, Course ID: 19
+Student ID: 33, Course ID: 26
+Student ID: 34, Course ID: 33
+Student ID: 35, Course ID: 12
+Student ID: 36, Course ID: 19
+Student ID: 37, Course ID: 26
+Student ID: 38, Course ID: 33
+Student ID: 39, Course ID: 12
+Student ID: 40, Course ID: 19
+Student ID: 51, Course ID: 36
+=> 
+[#<Enrollment:0x00000001215a0650
+  id: 1,
+  course_id: 1,
+  student_id: 1,
+  final_grade: "completed",
+  created_at: "2025-07-14 20:16:27.596824000 +0000",
+  updated_at: "2025-07-14 20:16:27.596824000 +0000">,
+ #<Enrollment:0x00000001215a0510
+  id: 2,
+  course_id: 1,
+  student_id: 2,
+
+//find mentors
+
+doc-rails(dev)* mentors=Mentor.all.select do |mentor|
+doc-rails(dev)*   MentorEnrollmentAssignment.where(mentor_id:mentor.id).count <=2
+doc-rails(dev)> end
+  Mentor Load (0.3ms)  SELECT "mentors".* FROM "mentors" /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (2.3ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 1 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 2 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 3 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.2ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 4 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 5 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 6 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 7 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 8 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 9 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 10 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 11 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 12 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 13 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 14 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 15 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 16 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 17 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 18 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 19 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 20 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 21 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 22 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 23 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 24 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 25 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 26 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 27 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 28 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 29 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 30 /*application='DocRails'*/
+  MentorEnrollmentAssignment Count (0.1ms)  SELECT COUNT(*) FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."mentor_id" = 31 /*application='DocRails'*/
+=> 
+[#<Mentor:0x00000001215c53d8
+...
+doc-rails(dev)> mentor= mentors.first
+=> 
+#<Mentor:0x00000001215c53d8
+...
+doc-rails(dev)> MentorEnrollmentAssignment.create(mentor_id:mentor.id, enrollment_id:'91')
+  TRANSACTION (0.1ms)  BEGIN immediate TRANSACTION /*application='DocRails'*/
+  Mentor Load (1.3ms)  SELECT "mentors".* FROM "mentors" WHERE "mentors"."id" = 22 LIMIT 1 /*application='DocRails'*/
+  Enrollment Load (0.1ms)  SELECT "enrollments".* FROM "enrollments" WHERE "enrollments"."id" = 91 LIMIT 1 /*application='DocRails'*/
+  MentorEnrollmentAssignment Exists? (0.5ms)  SELECT 1 AS one FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."enrollment_id" = 91 LIMIT 1 /*application='DocRails'*/
+  MentorEnrollmentAssignment Create (0.6ms)  INSERT INTO "mentor_enrollment_assignments" ("mentor_id", "enrollment_id", "created_at", "updated_at") VALUES (22, 91, '2025-07-20 19:17:28.623572', '2025-07-20 19:17:28.623572') RETURNING "id" /*application='DocRails'*/
+  TRANSACTION (1.3ms)  COMMIT TRANSACTION /*application='DocRails'*/
+=> 
+#<MentorEnrollmentAssignment:0x000000011ef06558
+ id: 91,
+ mentor_id: 22,
+ enrollment_id: 91,
+ created_at: "2025-07-20 19:17:28.623572000 +0000",
+ updated_at: "2025-07-20 19:17:28.623572000 +0000">
+
+
+Question 3 - Describe your project
+StayBnB is a simplified rental platform where users can list their properties for short-term stays and book stays at other users’ properties. The app allows users to become hosts by creating listings, and guests by searching and booking stays.
+
+Key features include:
+Users can create accounts and log in.
+Hosts can create property listings
+Guests can search listings by location and availability dates(?)
+Guests can request bookings for selected dates.
+Hosts can approve or reject booking requests
+Users can view their booking history and upcoming stays
+Users have profiles showing their listings or bookings
+
+
