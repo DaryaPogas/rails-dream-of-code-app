@@ -1,0 +1,126 @@
+Question 1
+Finish Task 1: Collect emails for students in the current Intro course
+
+doc-rails(dev)> CodingClass.find_by({title:'Intro to Programming'})
+  CodingClass Load (9.4ms)  SELECT "coding_classes".* FROM "coding_classes" WHERE "coding_classes"."title" = 'Intro to Programming' LIMIT 1 /*application='DocRails'*/
+=> 
+#<CodingClass:0x0000000123c92d08
+ id: 1,
+ title: "Intro to Programming",
+ description: "Learn the basics of web development, including HTM...",
+ created_at: "2025-07-14 20:16:22.763906000 +0000",
+ updated_at: "2025-07-14 20:16:22.763906000 +0000">
+
+doc-rails(dev)> Trimester.find_by({year:'2025', term:'Spring'})
+  Trimester Load (1.1ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."year" = '2025' AND "trimesters"."term" = 'Spring' LIMIT 1 /*application='DocRails'*/
+=> 
+#<Trimester:0x0000000108b585c0
+ id: 5,
+ year: "2025",
+ term: "Spring",
+ application_deadline: "2025-02-15",
+ start_date: "2025-03-01",
+ end_date: "2025-05-31",
+ created_at: "2025-07-14 20:16:22.821126000 +0000",
+ updated_at: "2025-07-14 20:16:22.821126000 +0000">
+
+doc-rails(dev)> Course.find_by({trimester_id:5, coding_class_id:1})
+  Course Load (0.2ms)  SELECT "courses".* FROM "courses" WHERE "courses"."trimester_id" = 5 AND "courses"."coding_class_id" = 1 LIMIT 1 /*application='DocRails'*/
+=> 
+#<Course:0x0000000123b3a780
+ id: 5,
+ coding_class_id: 1,
+ trimester_id: 5,
+ max_enrollment: 25,
+ created_at: "2025-07-14 20:16:22.904868000 +0000",
+ updated_at: "2025-07-14 20:16:22.904868000 +0000">
+
+doc-rails(dev)> enrollments.first(2).each do |enrollment| student=Student.find(enrollment.student_id); puts "#{student.id}, #{student.email}" end
+  Enrollment Load (8.6ms)  SELECT "enrollments".* FROM "enrollments" WHERE "enrollments"."course_id" = 5 ORDER BY "enrollments"."id" ASC LIMIT 2 /*application='DocRails'*/
+  Student Load (0.2ms)  SELECT "students".* FROM "students" WHERE "students"."id" = 41 LIMIT 1 /*application='DocRails'*/
+41, del.hoppe@halvorson.example
+  Student Load (0.1ms)  SELECT "students".* FROM "students" WHERE "students"."id" = 42 LIMIT 1 /*application='DocRails'*/
+42, bart@russel-boyer.example
+=> 
+[#<Enrollment:0x0000000126562f80
+  id: 71,
+  course_id: 5,
+  student_id: 41,
+  final_grade: "completed",
+  created_at: "2025-07-14 20:16:28.558647000 +0000",
+  updated_at: "2025-07-14 20:16:28.558647000 +0000">,
+ #<Enrollment:0x0000000126562e40
+  id: 72,
+  course_id: 5,
+  student_id: 42,
+
+
+
+Question 2
+Task 2: Email all mentors who have not assigned a final grade
+
+doc-rails(dev)> CodingClass.find_by({title:'Intro to Programming'})
+  CodingClass Load (0.4ms)  SELECT "coding_classes".* FROM "coding_classes" WHERE "coding_classes"."title" = 'Intro to Programming' LIMIT 1 /*application='DocRails'*/
+=> 
+#<CodingClass:0x000000012c325c30
+ id: 1,
+ title: "Intro to Programming",
+ description: "Learn the basics of web development, including HTM...",
+ created_at: "2025-07-14 20:16:22.763906000 +0000",
+ updated_at: "2025-07-14 20:16:22.763906000 +0000">
+doc-rails(dev)> Trimester.find_by({year:'2025', term:'Spring'})
+  Trimester Load (0.6ms)  SELECT "trimesters".* FROM "trimesters" WHERE "trimesters"."year" = '2025' AND "trimesters"."term" = 'Spring' LIMIT 1 /*application='DocRails'*/
+=> 
+#<Trimester:0x000000012c0a51e0
+ id: 5,
+ year: "2025",
+ term: "Spring",
+ application_deadline: "2025-02-15",
+ start_date: "2025-03-01",
+ end_date: "2025-05-31",
+ created_at: "2025-07-14 20:16:22.821126000 +0000",
+ updated_at: "2025-07-14 20:16:22.821126000 +0000">
+doc-rails(dev)> Course.find_by({trimester_id:5, coding_class_id:1})
+  Course Load (1.4ms)  SELECT "courses".* FROM "courses" WHERE "courses"."trimester_id" = 5 AND "courses"."coding_class_id" = 1 LIMIT 1 /*application='DocRails'*/
+=> 
+#<Course:0x000000012c3008b8
+ id: 5,
+ coding_class_id: 1,
+ trimester_id: 5,
+ max_enrollment: 25,
+ created_at: "2025-07-14 20:16:22.904868000 +0000",
+ updated_at: "2025-07-14 20:16:22.904868000 +0000">
+                                        
+doc-rails(dev)> enrollments = Enrollment.where(course_id: 5, final_grade: nil)
+  Enrollment Load (0.8ms)  SELECT "enrollments".* FROM "enrollments" WHERE "enrollments"."course_id" = 5 AND "enrollments"."final_grade" IS NULL /* loading for pp */ LIMIT 11 /*application='DocRails'*/
+=> 
+[#<Enrollment:0x000000012c1677b8
+...
+
+doc-rails(dev)* enrollments.each do |enrollment|
+doc-rails(dev)*   assignment_mentor = MentorEnrollmentAssignment.find_by({enrollment_id:enrollment.id})
+doc-rails(dev)*   mentor = Mentor.find_by(id:assignment_mentor.mentor_id)
+doc-rails(dev)*   puts "#{mentor.id}, #{mentor.email}"
+doc-rails(dev)> end
+  MentorEnrollmentAssignment Load (1.7ms)  SELECT "mentor_enrollment_assignments".* FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."enrollment_id" = 73 LIMIT 1 /*application='DocRails'*/
+  Mentor Load (0.4ms)  SELECT "mentors".* FROM "mentors" WHERE "mentors"."id" = 25 LIMIT 1 /*application='DocRails'*/
+25, elias@murazik.test
+  MentorEnrollmentAssignment Load (0.1ms)  SELECT "mentor_enrollment_assignments".* FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."enrollment_id" = 76 LIMIT 1 /*application='DocRails'*/
+  Mentor Load (0.1ms)  SELECT "mentors".* FROM "mentors" WHERE "mentors"."id" = 26 LIMIT 1 /*application='DocRails'*/
+26, arnulfo@kutch.test
+  MentorEnrollmentAssignment Load (0.1ms)  SELECT "mentor_enrollment_assignments".* FROM "mentor_enrollment_assignments" WHERE "mentor_enrollment_assignments"."enrollment_id" = 79 LIMIT 1 /*application='DocRails'*/
+  Mentor Load (0.1ms)  SELECT "mentors".* FROM "mentors" WHERE "mentors"."id" = 27 LIMIT 1 /*application='DocRails'*/
+27, dick@effertz.example
+=> 
+[#<Enrollment:0x000000012c44ba60
+  id: 73,
+  course_id: 5,
+  student_id: 43,
+  final_grade: nil,
+  created_at: "2025-07-14 20:16:28.587436000 +0000",
+  updated_at: "2025-07-14 20:16:28.587436000 +0000">,
+ #<Enrollment:0x000000012c44b920
+  id: 76,
+  course_id: 5,
+  student_id: 46,
+:
