@@ -1,1 +1,4 @@
+<% if flash[:notice] %>
+    <%= flash[:notice] %>
+<% end %>
 <h1>Trimester <%= "#{@trimester.term} #{@trimester.year}" %></h1>
