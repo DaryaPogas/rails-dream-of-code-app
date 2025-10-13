@@ -1,4 +1,6 @@
 class AdminDashboardController < ApplicationController
+
+   before_action :require_admin
   def index
      @current_trimester = Trimester.find_by("start_date <= ? AND end_date >= ?", Date.today, Date.today)
 
