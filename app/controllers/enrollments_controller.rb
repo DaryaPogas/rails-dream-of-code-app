@@ -1,6 +1,10 @@
 class EnrollmentsController < ApplicationController
   before_action :set_enrollment, only: %i[ show edit update destroy ]
 
+   before_action only: [:index, :show] do
+    require_role(["admin"])
+  end
+  
   # GET /enrollments or /enrollments.json
   def index
     @enrollments = Enrollment.all
