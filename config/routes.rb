@@ -28,4 +28,13 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
 
   root "home#index"
+
+  namespace :api do
+    namespace :v1 do
+      resources :courses, only: [:index] do
+        resources :enrollments, only: [:index]
+      end
+    end
+  end
+  
 end
