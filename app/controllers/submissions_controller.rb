@@ -1,4 +1,12 @@
 class SubmissionsController < ApplicationController
+  before_action only: [:new, :create] do
+    require_role(["student"])
+  end
+
+  before_action only: [:edit, :update] do
+    require_role(["mentor"])
+  end
+
   # GET /submissions/new
   def new
     @course = Course.find(params[:course_id])
